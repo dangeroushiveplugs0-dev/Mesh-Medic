@@ -6,6 +6,17 @@ add_library(
     meshmedic_native
     SHARED
     native-lib.cpp
+    filament_renderer.cpp
 )
 
+find_package(filament REQUIRED CONFIG)
+
 target_compile_features(meshmedic_native PRIVATE cxx_std_20)
+
+target_link_libraries(
+    meshmedic_native
+    PRIVATE
+    filament::filament
+    android
+    log
+)
