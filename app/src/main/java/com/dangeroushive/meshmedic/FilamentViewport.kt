@@ -25,6 +25,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
     private val scene: Scene
     private val filamentView: View
     private val camera: Camera
+    private val cube: FilamentCube
 
     private var swapChain: SwapChain? = null
     private var running = false
@@ -51,9 +52,18 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         scene = engine.createScene()
         filamentView = engine.createView()
         camera = engine.createCamera(EntityManager.get().create())
+        cube = FilamentCube(engine)
+        cube.build()
 
         filamentView.camera = camera
         filamentView.scene = scene
+        cube.addTo(scene)
+
+        camera.lookAt(
+            0.0, 2.2, 5.5,
+            0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0
+        )
 
         renderer.clearOptions = Renderer.ClearOptions().apply {
             clearColor = doubleArrayOf(0.055, 0.075, 0.105, 1.0)
@@ -104,6 +114,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         choreographer.removeFrameCallback(frameCallback)
         uiHelper.detach()
 
+        cube.destroy(scene)
         engine.destroyView(filamentView)
         engine.destroyScene(scene)
         engine.destroyCameraComponent(camera.entity)
