@@ -50,7 +50,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.9.3")
     implementation("androidx.compose.material3:material3:1.4.0")
 
-    implementation("com.google.android.filament:filament-android:1.77.2")
-    implementation("com.google.android.filament:filament-utils-android:1.77.2")
-    implementation("com.google.android.filament:filamat-android:1.77.2")
+    implementation("com.google.android.filament:filament-android:1.77.1")
+    implementation("com.google.android.filament:filament-utils-android:1.77.1")
+    implementation("com.google.android.filament:filamat-android:1.77.1")
 }
