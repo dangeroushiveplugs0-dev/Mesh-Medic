@@ -56,7 +56,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         filamentView.scene = scene
 
         renderer.clearOptions = Renderer.ClearOptions().apply {
-            clearColor = floatArrayOf(0.055f, 0.075f, 0.105f, 1.0f)
+            clearColor = doubleArrayOf(0.055, 0.075, 0.105, 1.0)
             clear = true
             discard = true
         }
@@ -81,7 +81,6 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
                 filamentView.viewport = Viewport(0, 0, width, height)
 
                 camera.setProjection(
-                    Camera.Projection.PERSPECTIVE,
                     45.0,
                     width.toDouble() / height.toDouble(),
                     0.1,
