@@ -1,8 +1,9 @@
 #include "GlesRenderer.h"
 
-#include "CameraMath.h"
-
 #include <GLES3/gl3.h>
+
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/glm.hpp>
 
 namespace meshmedic::rendering {
 
@@ -36,8 +37,6 @@ void main() {
     out_color = vec4(v_color, 1.0);
 }
 )";
-
-constexpr float pi = 3.14159265358979323846f;
 
 } // namespace
 
@@ -77,7 +76,11 @@ void GlesRenderer::destroy() {
     model_view_projection_ = -1;
 }
 
-bool GlesRenderer::render(EglContext& context, int width, int height) {
+bool GlesRenderer::render(
+    EglContext& context,
+    int width,
+    int height,
+    const glm::mat4& view) {
     if (!context.makeCurrent() || width <= 0 || height <= 0 ||
         shader_.id() == 0 || model_view_projection_ < 0) {
         return false;
@@ -90,17 +93,17 @@ bool GlesRenderer::render(EglContext& context, int width, int height) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    const Mat4 projection = Mat4::perspective(pi / 3.0f, aspect, 0.1f, 100.0f);
-    const Mat4 view = Mat4::translation(0.0f, 0.0f, -5.0f);
-    const Mat4 rotation = multiply(
-        Mat4::rotation_y(0.65f),
-        Mat4::rotation_x(-0.45f));
-    const Mat4 model = rotation;
-    const Mat4 model_view = multiply(view, model);
-    const Mat4 mvp = multiply(projection, model_view);
+    const glm::mat4 projection = glm::perspectiveRH_ZO(
+        glm::radians(60.0f),
+        aspect,
+        0.1f,
+        100.0f);
+
+    const glm::mat4 model = glm::mat4(1.0f);
+    const glm::mat4 mvp = projection * view * model;
 
     shader_.use();
-    glUniformMatrix4fv(model_view_projection_, 1, GL_FALSE, mvp.value.data());
+    glUniformMatrix4fv(model_view_projection_, 1, GL_FALSE, &mvp[0][0]);
     cube_.draw();
 
     context.swapBuffers();
