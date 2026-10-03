@@ -8,5 +8,7 @@ object NativeBridge {
     }
 
     external fun initializeCore(): Boolean
-    external fun renderSurface(surface: Surface, width: Int, height: Int): Boolean
+    external fun startSurface(surface: Surface, width: Int, height: Int): Boolean
+    external fun resizeSurface(width: Int, height: Int)
+    external fun stopSurface()
 }
