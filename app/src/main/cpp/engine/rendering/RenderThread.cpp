@@ -1,6 +1,7 @@
 #include "RenderThread.h"
 
 #include <chrono>
+#include <glm/mat4x4.hpp>
 
 namespace meshmedic::rendering {
 
@@ -21,6 +22,11 @@ bool RenderThread::start(ANativeWindow* window, int width, int height) {
         startup_complete_ = false;
         startup_success_ = false;
         running_.store(true);
+    }
+
+    {
+        std::lock_guard lock(camera_mutex_);
+        camera_.reset();
     }
 
     thread_ = std::thread(&RenderThread::run, this);
@@ -44,6 +50,47 @@ void RenderThread::resize(int width, int height) {
         height_ = height;
     }
     condition_.notify_one();
+}
+
+void RenderThread::rotateCamera(
+    float startX,
+    float startY,
+    float endX,
+    float endY,
+    int width,
+    int height) {
+    std::lock_guard lock(camera_mutex_);
+
+    if (!camera_controls_enabled_ || !running_.load()) {
+        return;
+    }
+
+    camera_.rotate(startX, startY, endX, endY, width, height);
+}
+
+void RenderThread::panCamera(float deltaX, float deltaY, int width, int height) {
+    std::lock_guard lock(camera_mutex_);
+
+    if (!camera_controls_enabled_ || !running_.load()) {
+        return;
+    }
+
+    camera_.pan(deltaX, deltaY, width, height);
+}
+
+void RenderThread::zoomCamera(float scaleFactor) {
+    std::lock_guard lock(camera_mutex_);
+
+    if (!camera_controls_enabled_ || !running_.load()) {
+        return;
+    }
+
+    camera_.zoom(scaleFactor);
+}
+
+void RenderThread::setCameraControlsEnabled(bool enabled) {
+    std::lock_guard lock(camera_mutex_);
+    camera_controls_enabled_ = enabled;
 }
 
 void RenderThread::stop() {
@@ -116,7 +163,12 @@ void RenderThread::run() {
         }
 
         if (current_width > 0 && current_height > 0) {
-            renderer.render(context, current_width, current_height);
+            glm::mat4 view;
+            {
+                std::lock_guard lock(camera_mutex_);
+                view = camera_.getViewMatrix();
+            }
+            renderer.render(context, current_width, current_height, view);
         }
 
         std::unique_lock lock(mutex_);
