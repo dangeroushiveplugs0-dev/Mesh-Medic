@@ -5,6 +5,8 @@ project(meshmedic_native LANGUAGES CXX)
 add_library(meshmedic_native SHARED
     native-lib.cpp
     engine/rendering/EglContext.cpp
+    engine/rendering/ShaderProgram.cpp
+    engine/rendering/CubeMesh.cpp
     engine/rendering/GlesRenderer.cpp
     engine/rendering/RenderThread.cpp
 )
