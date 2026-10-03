@@ -9,12 +9,12 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
 
         check(NativeBridge.initializeCore()) {
-            "Mesh Medic native core failed to initialize"
+            "wesh-Seller native C++ core failed to initialize"
         }
 
         setContentView(
             TextView(this).apply {
-                text = "Mesh Medic\nNative C++ core initialized"
+                text = "wesh-Seller\nNative C++ core initialized"
                 textSize = 22f
                 setPadding(32, 32, 32, 32)
             }
