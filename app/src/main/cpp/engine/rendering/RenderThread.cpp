@@ -77,32 +77,36 @@ void RenderThread::run() {
     }
 
     EglContext context;
-    const bool initialized = context.initialize(window);
-
-    {
-        std::lock_guard lock(mutex_);
-        startup_success_ = initialized;
-        startup_complete_ = true;
-    }
-    condition_.notify_one();
-
-    if (!initialized) {
+    if (!context.initialize(window)) {
+        {
+            std::lock_guard lock(mutex_);
+            startup_success_ = false;
+            startup_complete_ = true;
+        }
         running_.store(false);
+        condition_.notify_one();
         return;
     }
 
     GlesRenderer renderer;
-    const bool renderer_initialized = renderer.initialize(context);
-    if (!renderer_initialized) {
+    if (!renderer.initialize(context)) {
         {
             std::lock_guard lock(mutex_);
             startup_success_ = false;
+            startup_complete_ = true;
         }
         running_.store(false);
         condition_.notify_one();
         context.destroy();
         return;
     }
+
+    {
+        std::lock_guard lock(mutex_);
+        startup_success_ = true;
+        startup_complete_ = true;
+    }
+    condition_.notify_one();
 
     while (running_.load()) {
         {
