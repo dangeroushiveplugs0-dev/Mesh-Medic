@@ -15,6 +15,7 @@ import com.google.android.filament.SwapChain
 import com.google.android.filament.View
 import com.google.android.filament.Viewport
 import com.google.android.filament.android.UiHelper
+import com.google.android.filament.utils.Utils
 
 class FilamentViewport(context: Context) : SurfaceView(context) {
 
@@ -27,7 +28,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
     private val filamentView: View
     private val camera: Camera
     private val cube: FilamentCube
-    private val cameraController: OrbitCameraController
+    private val cameraController: FilamentCameraController
 
     private var swapChain: SwapChain? = null
     private var running = false
@@ -37,6 +38,8 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
             if (!running) return
 
             choreographer.postFrameCallback(this)
+
+            cameraController.updateCamera(camera)
 
             val chain = swapChain ?: return
             if (renderer.beginFrame(chain, frameTimeNanos)) {
@@ -51,6 +54,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         isFocusable = true
 
         Filament.init()
+        Utils.init()
 
         engine = Engine.create()
         renderer = engine.createRenderer()
@@ -59,7 +63,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         camera = engine.createCamera(EntityManager.get().create())
         cube = FilamentCube(engine)
         cube.build()
-        cameraController = OrbitCameraController(camera)
+        cameraController = FilamentCameraController(this)
 
         filamentView.camera = camera
         filamentView.scene = scene
@@ -89,6 +93,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
                 if (height <= 0) return
 
                 filamentView.viewport = Viewport(0, 0, width, height)
+                cameraController.setViewport(width, height)
 
                 camera.setProjection(
                     45.0,
@@ -105,7 +110,6 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         parent?.requestDisallowInterceptTouchEvent(true)
-
         val handled = cameraController.onTouchEvent(event)
 
         if (event.actionMasked == MotionEvent.ACTION_UP ||
