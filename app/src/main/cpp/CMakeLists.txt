@@ -43,7 +43,7 @@ find_library(android-lib android)
 find_library(egl-lib EGL)
 find_library(glesv3-lib GLESv3)
 
-target_link_libraries(meshmedic_native
+target_link_libraries(meshmedic_native PRIVATE
     ${log-lib}
     ${android-lib}
     ${egl-lib}
