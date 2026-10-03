@@ -34,6 +34,10 @@ target_compile_options(meshmedic_native PRIVATE
     -Werror
 )
 
+target_compile_definitions(meshmedic_native PRIVATE
+    GLM_ENABLE_EXPERIMENTAL
+)
+
 target_link_libraries(meshmedic_native PRIVATE
     glm::glm
 )
