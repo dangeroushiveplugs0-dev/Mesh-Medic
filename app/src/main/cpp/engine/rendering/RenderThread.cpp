@@ -18,11 +18,19 @@ bool RenderThread::start(ANativeWindow* window, int width, int height) {
         window_ = window;
         width_ = width;
         height_ = height;
+        startup_complete_ = false;
+        startup_success_ = false;
         running_.store(true);
     }
 
     thread_ = std::thread(&RenderThread::run, this);
-    return true;
+
+    std::unique_lock lock(mutex_);
+    condition_.wait(lock, [this] {
+        return startup_complete_ || !running_.load();
+    });
+
+    return startup_complete_ && startup_success_;
 }
 
 void RenderThread::resize(int width, int height) {
@@ -51,6 +59,8 @@ void RenderThread::stop() {
         window_ = nullptr;
         width_ = 0;
         height_ = 0;
+        startup_complete_ = false;
+        startup_success_ = false;
     }
 }
 
@@ -67,7 +77,16 @@ void RenderThread::run() {
     }
 
     EglContext context;
-    if (!context.initialize(window)) {
+    const bool initialized = context.initialize(window);
+
+    {
+        std::lock_guard lock(mutex_);
+        startup_success_ = initialized;
+        startup_complete_ = true;
+    }
+    condition_.notify_one();
+
+    if (!initialized) {
         running_.store(false);
         return;
     }
