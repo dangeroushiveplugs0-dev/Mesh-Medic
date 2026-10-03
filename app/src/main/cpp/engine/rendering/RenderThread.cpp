@@ -39,10 +39,7 @@ void RenderThread::resize(int width, int height) {
 }
 
 void RenderThread::stop() {
-    if (!running_.exchange(false)) {
-        return;
-    }
-
+    running_.store(false);
     condition_.notify_one();
 
     if (thread_.joinable()) {
