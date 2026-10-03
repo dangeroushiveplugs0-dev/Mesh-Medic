@@ -56,6 +56,45 @@ void resize_surface(jint width, jint height) {
     }
 }
 
+void rotate_camera(
+    jfloat start_x,
+    jfloat start_y,
+    jfloat end_x,
+    jfloat end_y,
+    jint width,
+    jint height) {
+    std::lock_guard lock(render_mutex);
+    if (render_thread) {
+        render_thread->rotateCamera(
+            start_x, start_y, end_x, end_y, width, height);
+    }
+}
+
+void pan_camera(
+    jfloat delta_x,
+    jfloat delta_y,
+    jint width,
+    jint height) {
+    std::lock_guard lock(render_mutex);
+    if (render_thread) {
+        render_thread->panCamera(delta_x, delta_y, width, height);
+    }
+}
+
+void zoom_camera(jfloat scale_factor) {
+    std::lock_guard lock(render_mutex);
+    if (render_thread) {
+        render_thread->zoomCamera(scale_factor);
+    }
+}
+
+void set_camera_controls_enabled(bool enabled) {
+    std::lock_guard lock(render_mutex);
+    if (render_thread) {
+        render_thread->setCameraControlsEnabled(enabled);
+    }
+}
+
 void stop_surface() {
     std::lock_guard lock(render_mutex);
 
@@ -101,6 +140,51 @@ Java_com_dangeroushive_meshmedic_NativeBridge_resizeSurface(
     jint width,
     jint height) {
     meshmedic::resize_surface(width, height);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dangeroushive_meshmedic_NativeBridge_rotateCamera(
+    JNIEnv*,
+    jobject,
+    jfloat start_x,
+    jfloat start_y,
+    jfloat end_x,
+    jfloat end_y,
+    jint width,
+    jint height) {
+    meshmedic::rotate_camera(
+        start_x, start_y, end_x, end_y, width, height);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dangeroushive_meshmedic_NativeBridge_panCamera(
+    JNIEnv*,
+    jobject,
+    jfloat delta_x,
+    jfloat delta_y,
+    jint width,
+    jint height) {
+    meshmedic::pan_camera(delta_x, delta_y, width, height);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dangeroushive_meshmedic_NativeBridge_zoomCamera(
+    JNIEnv*,
+    jobject,
+    jfloat scale_factor) {
+    meshmedic::zoom_camera(scale_factor);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_dangeroushive_meshmedic_NativeBridge_setCameraControlsEnabled(
+    JNIEnv*,
+    jobject,
+    jboolean enabled) {
+    meshmedic::set_camera_controls_enabled(enabled == JNI_TRUE);
 }
 
 extern "C"
