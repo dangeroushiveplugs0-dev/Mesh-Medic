@@ -6,6 +6,7 @@ add_library(meshmedic_native SHARED
     native-lib.cpp
     engine/rendering/EglContext.cpp
     engine/rendering/GlesRenderer.cpp
+    engine/rendering/RenderThread.cpp
 )
 
 target_compile_features(meshmedic_native PRIVATE cxx_std_20)
