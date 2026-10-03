@@ -4,6 +4,8 @@
 #include "EglContext.h"
 #include "ShaderProgram.h"
 
+#include <glm/mat4x4.hpp>
+
 namespace meshmedic::rendering {
 
 class GlesRenderer {
@@ -16,7 +18,7 @@ public:
 
     bool initialize(EglContext& context);
     void destroy();
-    bool render(EglContext& context, int width, int height);
+    bool render(EglContext& context, int width, int height, const glm::mat4& view);
 
 private:
     ShaderProgram shader_;
