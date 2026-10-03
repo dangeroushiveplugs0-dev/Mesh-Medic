@@ -10,8 +10,6 @@ class ArcballCamera {
 public:
     ArcballCamera();
 
-    glm::vec3 getSphereVector(float x, float y, int width, int height) const;
-
     void rotate(
         float startX,
         float startY,
@@ -28,19 +26,19 @@ public:
     void reset();
 
 private:
-    glm::vec3 position() const;
+    glm::vec3 forwardVector() const;
     glm::vec3 upVector() const;
     void rebuildOrientation();
 
-    glm::vec3 target_{0.0f, 0.0f, 0.0f};
+    glm::vec3 position_{0.0f, 0.0f, 5.0f};
     glm::quat orientation_{1.0f, 0.0f, 0.0f, 0.0f};
 
     float yaw_ = 0.0f;
     float pitch_ = 0.0f;
-    float radius_ = 5.0f;
+    float zoomDistance_ = 5.0f;
 
-    static constexpr float kMinRadius = 0.25f;
-    static constexpr float kMaxRadius = 100.0f;
+    static constexpr float kMinZoomDistance = 0.25f;
+    static constexpr float kMaxZoomDistance = 100.0f;
     static constexpr float kMaxPitch = 1.55334306f; // 89 degrees
     static constexpr float kRotationSensitivity = 1.35f;
 };
