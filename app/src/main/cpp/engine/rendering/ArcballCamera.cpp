@@ -68,7 +68,7 @@ void ArcballCamera::rotate(
     const glm::vec3 axisCamera = glm::cross(start, end);
     const float axisLength = glm::length(axisCamera);
 
-    if (axisLength <= kEpsilon || dotProduct >= 1.0f - kEpsilon) {
+    if (dotProduct >= 1.0f - kEpsilon) {
         return;
     }
 
