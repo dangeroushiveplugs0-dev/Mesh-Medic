@@ -12,8 +12,10 @@ class NativeViewport(context: Context) : SurfaceView(context), SurfaceHolder.Cal
     override fun surfaceCreated(holder: SurfaceHolder) = Unit
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        NativeBridge.renderSurface(holder.surface, width, height)
+        NativeBridge.startSurface(holder.surface, width, height)
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder) = Unit
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        NativeBridge.stopSurface()
+    }
 }
