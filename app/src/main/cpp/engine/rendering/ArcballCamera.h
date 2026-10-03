@@ -30,13 +30,19 @@ public:
 private:
     glm::vec3 position() const;
     glm::vec3 upVector() const;
+    void rebuildOrientation();
 
     glm::vec3 target_{0.0f, 0.0f, 0.0f};
     glm::quat orientation_{1.0f, 0.0f, 0.0f, 0.0f};
+
+    float yaw_ = 0.0f;
+    float pitch_ = 0.0f;
     float radius_ = 5.0f;
 
     static constexpr float kMinRadius = 0.25f;
     static constexpr float kMaxRadius = 100.0f;
+    static constexpr float kMaxPitch = 1.55334306f; // 89 degrees
+    static constexpr float kRotationSensitivity = 1.35f;
 };
 
 } // namespace meshmedic::rendering
