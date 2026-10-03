@@ -28,7 +28,8 @@ class FilamentCameraController(view: android.view.View) {
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        return gestureDetector.onTouchEvent(event)
+        gestureDetector.onTouchEvent(event)
+        return true
     }
 
     fun updateCamera(camera: Camera) {
