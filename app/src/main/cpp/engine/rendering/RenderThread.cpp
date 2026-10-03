@@ -92,6 +92,17 @@ void RenderThread::run() {
     }
 
     GlesRenderer renderer;
+    const bool renderer_initialized = renderer.initialize(context);
+    if (!renderer_initialized) {
+        {
+            std::lock_guard lock(mutex_);
+            startup_success_ = false;
+        }
+        running_.store(false);
+        condition_.notify_one();
+        context.destroy();
+        return;
+    }
 
     while (running_.load()) {
         {
@@ -110,6 +121,7 @@ void RenderThread::run() {
         });
     }
 
+    renderer.destroy();
     context.destroy();
 }
 
