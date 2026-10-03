@@ -31,6 +31,8 @@ private:
     std::mutex mutex_;
     std::condition_variable condition_;
     std::atomic<bool> running_{false};
+    bool startup_complete_ = false;
+    bool startup_success_ = false;
     ANativeWindow* window_ = nullptr;
     int width_ = 0;
     int height_ = 0;
