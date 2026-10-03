@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MeshMedic"
+rootProject.name = "wesh-Seller"
 include(":app")
