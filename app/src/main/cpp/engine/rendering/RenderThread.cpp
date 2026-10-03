@@ -59,14 +59,14 @@ void RenderThread::stop() {
 
 void RenderThread::run() {
     ANativeWindow* window = nullptr;
-    int width = 0;
-    int height = 0;
+    int current_width = 0;
+    int current_height = 0;
 
     {
         std::lock_guard lock(mutex_);
         window = window_;
-        width = width_;
-        height = height_;
+        current_width = width_;
+        current_height = height_;
     }
 
     EglContext context;
@@ -80,12 +80,12 @@ void RenderThread::run() {
     while (running_.load()) {
         {
             std::lock_guard lock(mutex_);
-            width = width_;
-            height = height_;
+            current_width = width_;
+            current_height = height_;
         }
 
-        if (width > 0 && height > 0) {
-            renderer.render(context, width, height);
+        if (current_width > 0 && current_height > 0) {
+            renderer.render(context, current_width, current_height);
         }
 
         std::unique_lock lock(mutex_);
