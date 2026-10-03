@@ -93,7 +93,7 @@ bool GlesRenderer::render(
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     const float aspect = static_cast<float>(width) / static_cast<float>(height);
-    const glm::mat4 projection = glm::perspectiveRH_ZO(
+    const glm::mat4 projection = glm::perspectiveRH_NO(
         glm::radians(60.0f),
         aspect,
         0.1f,
