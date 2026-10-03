@@ -15,6 +15,7 @@ import com.google.android.filament.SwapChain
 import com.google.android.filament.View
 import com.google.android.filament.Viewport
 import com.google.android.filament.android.UiHelper
+import com.google.android.filament.utils.Utils
 
 class FilamentViewport(context: Context) : SurfaceView(context) {
 
@@ -53,6 +54,8 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         isFocusable = true
 
         Filament.init()
+        Utils.init()
+
         engine = Engine.create()
         renderer = engine.createRenderer()
         scene = engine.createScene()
