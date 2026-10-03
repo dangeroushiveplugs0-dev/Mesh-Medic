@@ -47,6 +47,9 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
     }
 
     init {
+        isClickable = true
+        isFocusable = true
+
         Filament.init()
 
         engine = Engine.create()
@@ -98,9 +101,20 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         }
 
         uiHelper.attachTo(this)
-        setOnTouchListener { _, event ->
-            cameraController.onTouchEvent(event)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        parent?.requestDisallowInterceptTouchEvent(true)
+
+        val handled = cameraController.onTouchEvent(event)
+
+        if (event.actionMasked == MotionEvent.ACTION_UP ||
+            event.actionMasked == MotionEvent.ACTION_CANCEL
+        ) {
+            parent?.requestDisallowInterceptTouchEvent(false)
         }
+
+        return handled
     }
 
     override fun onAttachedToWindow() {
