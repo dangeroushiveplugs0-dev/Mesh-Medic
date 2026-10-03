@@ -1,0 +1,42 @@
+#pragma once
+
+#include <glm/mat4x4.hpp>
+#include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
+
+namespace meshmedic::rendering {
+
+class ArcballCamera {
+public:
+    ArcballCamera();
+
+    glm::vec3 getSphereVector(float x, float y, int width, int height) const;
+
+    void rotate(
+        float startX,
+        float startY,
+        float endX,
+        float endY,
+        int width,
+        int height);
+
+    void pan(float deltaX, float deltaY, int width, int height);
+    void zoom(float scaleFactor);
+
+    glm::mat4 getViewMatrix() const;
+
+    void reset();
+
+private:
+    glm::vec3 position() const;
+    glm::vec3 upVector() const;
+
+    glm::vec3 target_{0.0f, 0.0f, 0.0f};
+    glm::quat orientation_{1.0f, 0.0f, 0.0f, 0.0f};
+    float radius_ = 5.0f;
+
+    static constexpr float kMinRadius = 0.25f;
+    static constexpr float kMaxRadius = 100.0f;
+};
+
+} // namespace meshmedic::rendering
