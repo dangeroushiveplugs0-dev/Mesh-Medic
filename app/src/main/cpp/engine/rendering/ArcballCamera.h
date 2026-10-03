@@ -40,7 +40,7 @@ private:
     static constexpr float kMinZoomDistance = 0.25f;
     static constexpr float kMaxZoomDistance = 100.0f;
     static constexpr float kMaxPitch = 1.55334306f; // 89 degrees
-    static constexpr float kRotationSensitivity = 1.35f;
+    static constexpr float kRotationSensitivity = 0.25f;
 };
 
 } // namespace meshmedic::rendering
