@@ -2,6 +2,7 @@ package com.dangeroushive.meshmedic
 
 import android.content.Context
 import android.view.Choreographer
+import android.view.MotionEvent
 import android.view.Surface
 import android.view.SurfaceView
 import com.google.android.filament.Camera
@@ -26,6 +27,7 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
     private val filamentView: View
     private val camera: Camera
     private val cube: FilamentCube
+    private val cameraController: OrbitCameraController
 
     private var swapChain: SwapChain? = null
     private var running = false
@@ -54,16 +56,11 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         camera = engine.createCamera(EntityManager.get().create())
         cube = FilamentCube(engine)
         cube.build()
+        cameraController = OrbitCameraController(camera)
 
         filamentView.camera = camera
         filamentView.scene = scene
         cube.addTo(scene)
-
-        camera.lookAt(
-            0.0, 2.2, 5.5,
-            0.0, 0.0, 0.0,
-            0.0, 1.0, 0.0
-        )
 
         renderer.clearOptions = Renderer.ClearOptions().apply {
             clearColor = doubleArrayOf(0.055, 0.075, 0.105, 1.0)
@@ -101,6 +98,9 @@ class FilamentViewport(context: Context) : SurfaceView(context) {
         }
 
         uiHelper.attachTo(this)
+        setOnTouchListener { _, event ->
+            cameraController.onTouchEvent(event)
+        }
     }
 
     override fun onAttachedToWindow() {
